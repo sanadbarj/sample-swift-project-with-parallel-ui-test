@@ -26,7 +26,10 @@ workflows:
     - git-clone@8: {}
     - xcode-build-for-test@3:
         inputs:
-        - destination: generic/platform=iOS Simulator
+        - destination: platform=iOS Simulator,name=iPhone 16 Pro Max,OS=18.2
+        - generate_code_coverage_files: "yes"
+        - test_repetition_mode: "retryOnFailure"
+        - project_type: "workspace"
     - deploy-to-bitrise-io@2:
         inputs:
         - pipeline_intermediate_files: "$BITRISE_TEST_BUNDLE_PATH:BITRISE_TEST_BUNDLE_PATH"
