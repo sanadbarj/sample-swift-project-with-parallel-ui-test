@@ -14,7 +14,11 @@
   "testTargets" : [
     {
       "selectedTests" : [
-        "BullsEyeEventuallyFailingInMemoryTests\/testPassIfNoFailuresRemain()"
+        "BullsEyeEventuallyFailingInMemoryTests\/testFailIfNoSuccessesRemain()",
+        "BullsEyeEventuallyFailingInMemoryTests\/testPassIfNoFailuresRemain()",
+        "BullsEyeEventuallyFailingTests\/testFailIfNoSuccessesRemain()",
+        "BullsEyeEventuallySucceedingTests\/testPassIfNoFailuresRemain()",
+        "BullsEyeFailingTests\/testApiCallCompletes()"
       ],
       "target" : {
         "containerPath" : "container:BullsEye.xcodeproj",

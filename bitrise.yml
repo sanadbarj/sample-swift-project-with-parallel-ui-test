@@ -1,0 +1,57 @@
+---
+format_version: '17'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: ios
+app:
+  envs:
+  - BITRISE_PROJECT_PATH: BullsEye.xcworkspace
+  - BITRISE_SCHEME: BullsEye
+meta:
+  bitrise.io:
+    stack: osx-xcode-16.1.x
+    machine_type_id: g2-m1.4core
+pipelines:
+  build_and_run_tests:
+    workflows:
+      xcode_build_for_test: {}
+      run_ui_tests:
+        depends_on:
+        - xcode_build_for_test
+      run_unit_tests:
+        depends_on:
+        - xcode_build_for_test
+workflows:
+  xcode_build_for_test:
+    steps:
+    - git-clone@8: {}
+    - xcode-build-for-test@3:
+        inputs:
+        - destination: generic/platform=iOS Simulator
+    - deploy-to-bitrise-io@2:
+        inputs:
+        - pipeline_intermediate_files: "$BITRISE_TEST_BUNDLE_PATH:BITRISE_TEST_BUNDLE_PATH"
+  run_ui_tests:
+    before_run:
+    - _pull_test_bundle
+    steps:
+    - xcode-test-without-building@0:
+        inputs:
+        - xctestrun: "$BITRISE_TEST_BUNDLE_PATH/BullsEye_UITests_iphonesimulator18.2-arm64-x86_64.xctestrun"
+        - destination: platform=iOS Simulator,name=iPhone 16 Pro Max
+    meta:
+      bitrise.io:
+        stack: osx-xcode-16.1.x
+        machine_type_id: g2-m1.4core
+  run_unit_tests:
+    before_run:
+    - _pull_test_bundle
+    steps:
+    - xcode-test-without-building@0:
+        inputs:
+        - xctestrun: "$BITRISE_TEST_BUNDLE_PATH/BullsEye_UnitTests_iphonesimulator18.2-arm64-x86_64.xctestrun"
+        - destination: platform=iOS Simulator,name=iPhone 16 Pro Max
+  _pull_test_bundle:
+    steps:
+    - pull-intermediate-files@1:
+        inputs:
+        - artifact_sources: xcode_build_for_test
